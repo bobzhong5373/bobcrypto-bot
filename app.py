@@ -29,11 +29,11 @@ def send_message(chat_id, text):
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-    
+
     # ✅ 最关键的修改：固定 webhook 地址
     webhook_url = "https://web-production-7f5d.up.railway.app/webhook"
-    
     telegram_url = f"https://api.telegram.org/bot{BOT_TOKEN}/setWebhook"
+
     response = requests.get(telegram_url, params={"url": webhook_url})
     print("Webhook set:", response.json())
 
