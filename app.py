@@ -42,5 +42,5 @@ def webhook():
 
     return "ok"
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+# 删除 app.run，Railway 将用 gunicorn 启动 Flask
+# 保留 app 实例作为入口
