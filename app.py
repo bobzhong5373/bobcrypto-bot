@@ -8,12 +8,12 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 USER_ID = os.getenv("USER_ID")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
-# ✅ 首页测试接口
+# 首页测试
 @app.route('/')
 def home():
     return "🤖 Bot is running!"
 
-# 🛠️ Telegram Webhook 接收器
+# Webhook 入口
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
@@ -21,21 +21,20 @@ def webhook():
         chat_id = data['message']['chat']['id']
         text = data['message'].get('text', '')
 
-        # 🎯 指令响应逻辑
         if text == '/start':
-            send_message(chat_id, "🤖 Bot 已上线！输入 /next 查看接力项目")
+            send_message(chat_id, "🤖 Bot 已上线！欢迎使用投资提醒系统。")
         elif text == '/next':
-            send_message(chat_id, "📌 当前推荐项目：\n\n🚀 Cogni AI\n💡 Lightchain AI\n🧠 Ozak AI")
+            send_message(chat_id, "📌 当前推荐项目：Solaxy / Cogni AI 等，输入 /strategy 查看策略。")
         elif text == '/claim':
-            send_message(chat_id, "📢 Solaxy Claim 状态：尚未开放，预计 6 月 16 日晚间启动")
+            send_message(chat_id, "📢 Solaxy Claim 功能已启动！请尽快挂单！")
         elif text == '/price':
-            send_message(chat_id, "💰 当前挂单建议：\n• $0.015（保本）\n• $0.03（冲高止盈）")
+            send_message(chat_id, "💰 当前挂单价位：0.015 / 0.02 / 0.03，支持分批止盈")
         elif text == '/strategy':
-            send_message(chat_id, "📈 分批卖出策略：\n• 40% 挂 0.015\n• 40% 挂 0.03\n• 20% 留作后续观察")
+            send_message(chat_id, "📈 当前分批策略：30% - 0.015、50% - 0.02、20% - 0.03")
     
     return {'ok': True}
 
-# 📤 核心发信函数
+# 发送消息函数
 def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {
@@ -46,16 +45,13 @@ def send_message(chat_id, text):
     response = requests.post(url, json=payload)
     print(response.text)
 
-# 🚀 启动监听服务 + 设置 Webhook
+# 自动注册 Webhook
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
-
-    # 设置 Webhook（仅部署时自动运行一次）
     telegram_url = f"https://api.telegram.org/bot{BOT_TOKEN}/setWebhook"
-    requests.get(telegram_url, params={"url": f"{WEBHOOK_URL}"})
+    requests.get(telegram_url, params={"url": WEBHOOK_URL})
     print("✅ Webhook 已设置成功")
 
-    # 测试推送（上线时自动发一次）
     send_message(USER_ID, "✅ 测试提醒已发送 – Bot 成功部署！")
 
     app.run(host='0.0.0.0', port=port)
