@@ -1,34 +1,33 @@
 import os
 from flask import Flask, request
-import telegram
-from telegram import Update
+from telegram import Bot, Update
 from telegram.ext import Dispatcher, CommandHandler
-from dotenv import load_dotenv
 
-load_dotenv()
 app = Flask(__name__)
 
-# ✅ 从环境变量获取 Bot Token
+# 从环境变量获取 Token
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
-bot = telegram.Bot(token=BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN)
 
-@app.route('/')
-def home():
-    return "BOBcrypto Bot is running!"
+# 设置 Dispatcher
+dispatcher = Dispatcher(bot=bot, update_queue=None, workers=0, use_context=True)
 
-@app.route("/webhook", methods=["POST"])
+# /start 指令处理函数
+def start(update, context):
+    chat_id = update.effective_chat.id
+    context.bot.send_message(chat_id=chat_id, text="🤖 Hello! 你的 Bot 已部署成功！")
+
+# 注册指令处理器
+dispatcher.add_handler(CommandHandler("start", start))
+
+# Webhook 路由处理
+@app.route('/webhook', methods=['POST'])
 def webhook():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
-    message = update.message or update.edited_message
+    if request.method == "POST":
+        update = Update.de_json(request.get_json(force=True), bot)
+        dispatcher.process_update(update)
+    return "OK"
 
-    if message:
-        text = message.text or ""
-        chat_id = message.chat.id
-
-        if text.startswith('/start'):
-            bot.send_message(chat_id=chat_id, text="✅ BOBcrypto Bot 已启动，你将收到 Web3 投资提醒。")
-
-    return "ok"
-
+# 主入口（仅用于测试或本地）
 if __name__ == "__main__":
     app.run(debug=True)
