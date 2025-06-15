@@ -23,15 +23,15 @@ def webhook():
 
         # 🎯 命令响应逻辑
         if text == '/start':
-            send_message(chat_id, "🤖 Bot 已上线，可以开始使用！")
+            send_message(chat_id, "🤖 Bot 已上线，欢迎使用！")
         elif text == '/next':
-            send_message(chat_id, "📌 当前推荐接力项目：\n1. Cogni AI\n2. Lightchain AI\n3. Ozak AI\n\n(TGE预计7日内，可使用 /strategy 查看挂单建议)")
+            send_message(chat_id, "📌 当前推荐项目：请稍候加载中...")
         elif text == '/claim':
-            send_message(chat_id, "📢 Solaxy 当前状态：\n- ✅ 预售进行中，预计 6月16日 21:30 Claim\n- 可关注价格提醒模块 /price")
+            send_message(chat_id, "📢 Solaxy 当前 Claim 状态：待确认中...")
         elif text == '/price':
-            send_message(chat_id, "💰 当前挂单策略参考：\n- 初始挂单：0.015 USDT\n- 分批调高：0.02 / 0.03\n可配合自动成交提醒使用。")
+            send_message(chat_id, "💰 当前挂单策略价格：0.015 / 0.03 USDT")
         elif text == '/strategy':
-            send_message(chat_id, "📈 当前分批变现策略：\n- 成本：$0.00175\n- 总持仓：1,911,324 SOLX\n- 第一目标：0.015（锁本）\n- 第二目标：0.02\n- 第三目标：0.03（冲击 $30,000）")
+            send_message(chat_id, "📈 当前分批卖出策略：第一档 0.015，第二档 0.02，目标档 0.03")
 
     return {'ok': True}
 
@@ -46,7 +46,7 @@ def send_message(chat_id, text):
     response = requests.post(url, json=payload)
     print(response.text)
 
-# 🔗 启动监听服务 + Webhook 注册
+# 📡 启动监听服务 + Webhook 注册
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
 
