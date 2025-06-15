@@ -1,1 +1,1 @@
-# bobcrypto-bot
+.# bobcrypto-bot
