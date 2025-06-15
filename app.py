@@ -15,32 +15,23 @@ def webhook():
 
     if text == "/start":
         message.reply_text("🤖 Bot 已上线！欢迎使用投资提醒系统。")
-
     elif text == "/simulate":
-        message.reply_text("📊 模拟挂单收益功能已启动（测试中）\n例如：0.015 = $28,670，命中概率约 42%")
-
+        message.reply_text("📊 模拟挂单收益功能即将启动…")
     elif text == "/exitplan":
-        message.reply_text("🧠 组合挂单策略建议：\n- 30% 挂 0.015\n- 40% 挂 0.02\n- 30% 冲高挂 0.03")
-
+        message.reply_text("🧠 组合挂单策略建议模块已激活…")
     elif text == "/cogni":
-        message.reply_text("🧬 Cogni AI 项目追踪：\n- TGE 时间：预计 6月18日\n- 初始流通市值：26.7万 USDT\n- 上线平台：待公布")
-
+        message.reply_text("🍬 Cogni AI 项目监听已启用。")
     elif text == "/lightchain":
-        message.reply_text("💡 Lightchain 状态追踪：\n- TGE 预计 6月20日前后\n- 社群热度：中高\n- 当前募资进度：82%")
-
+        message.reply_text("💡 Lightchain 状态更新已同步。")
     elif text == "/ozak":
-        message.reply_text("🛰️ Ozak 项目追踪：\n- 上线时间：待定\n- 当前阶段：私募完成，等待公告\n- 风险等级：中等")
-
+        message.reply_text("🎌 Ozak 项目追踪：正在监听 TGE 时间与动态。")
     elif text == "/adjust":
-        message.reply_text("🔄 当前池子价格建议：\n- 若 > 0.016：可上调第一挂单至 0.017\n- 若 < 0.014：建议下调或等待反弹")
-
+        message.reply_text("🔄 当前池子价格建议挂单区间将在策略更新后推送。")
     elif text == "/status":
-        message.reply_text("📈 当前监听状态：\n✅ Solaxy: 已启动挂单监听\n✅ Cogni: TGE 倒计时中\n✅ Lightchain: 已接入鲸鱼监听\n📊 策略模板：0.015 / 0.02 / 0.03")
-
+        message.reply_text("📈 当前监听状态：\n✅ Solaxy: 已启动挂单监听\n✅ Lightchain: 等待 TGE\n✅ 巨鲸追踪: 待绑定 /bind")
     else:
-        message.reply_text("🤖 指令未识别。请发送 /start 查看可用功能。")
+        message.reply_text("🤖 指令未识别。请发送 /start 查看欢迎信息")
 
     return "ok"
 
-# 删除 app.run，Railway 将用 gunicorn 启动 Flask
-# 保留 app 实例作为入口
+# Railway 使用 gunicorn 启动，无需 app.run()
