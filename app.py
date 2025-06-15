@@ -3,31 +3,32 @@ from flask import Flask, request
 import telegram
 from telegram import Update
 from telegram.ext import Dispatcher, CommandHandler
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(__name__)
 
-# 从环境变量中读取 Bot Token
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+# ✅ 从环境变量获取 Bot Token
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = telegram.Bot(token=BOT_TOKEN)
 
-@app.route("/")
+@app.route('/')
 def home():
-    return "Bot is running."
+    return "BOBcrypto Bot is running!"
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
     update = telegram.Update.de_json(request.get_json(force=True), bot)
     message = update.message or update.edited_message
 
-    if message and message.text:
-        text = message.text.strip()
+    if message:
+        text = message.text or ""
         chat_id = message.chat.id
 
-        # 简单响应指令
-        if text == "/start":
-            bot.send_message(chat_id=chat_id, text="✅ 欢迎使用 BOBcrypto 投资提醒 Bot！")
+        if text.startswith('/start'):
+            bot.send_message(chat_id=chat_id, text="✅ BOBcrypto Bot 已启动，你将收到 Web3 投资提醒。")
 
-    return "OK"
+    return "ok"
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    app.run(debug=True)
