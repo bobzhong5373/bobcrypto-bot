@@ -19,7 +19,6 @@ def run_schedule():
         schedule.run_pending()
         time.sleep(1)
 
-# 用于后台线程启动
 def start_scheduler():
     thread = threading.Thread(target=run_schedule)
     thread.daemon = True
