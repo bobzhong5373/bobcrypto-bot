@@ -23,16 +23,16 @@ def webhook():
 
         # 🎯 命令响应逻辑
         if text == '/start':
-            send_message(chat_id, "🤖 Bot 已上线，欢迎使用！")
+            send_message(chat_id, "🤖 Bot 已就绪，请输入命令：\n/start\n/next\n/price\n/strategy")
         elif text == '/next':
-            send_message(chat_id, "📌 当前推荐项目：请稍候加载中...")
+            send_message(chat_id, "📌 当前推荐项目：\n1. Cogni AI\n2. Lightchain AI")
         elif text == '/claim':
-            send_message(chat_id, "📢 Solaxy 当前 Claim 状态：待确认中...")
+            send_message(chat_id, "📢 Solaxy 仍未开启 Claim，请稍后再试。")
         elif text == '/price':
-            send_message(chat_id, "💰 当前挂单策略价格：0.015 / 0.03 USDT")
+            send_message(chat_id, "💰 当前挂单价格为：\n0.015 / 0.02 / 0.03\n请根据实际行情调整。")
         elif text == '/strategy':
-            send_message(chat_id, "📈 当前分批卖出策略：第一档 0.015，第二档 0.02，目标档 0.03")
-
+            send_message(chat_id, "📈 当前分批卖出策略：\n30% - 0.015\n40% - 0.02\n30% - 0.03")
+    
     return {'ok': True}
 
 # 📬 核心发信函数
@@ -46,7 +46,7 @@ def send_message(chat_id, text):
     response = requests.post(url, json=payload)
     print(response.text)
 
-# 📡 启动监听服务 + Webhook 注册
+# 🔗 启动监听服务 + Webhook 注册
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
 
