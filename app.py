@@ -25,7 +25,7 @@ def webhook():
         if text == '/start':
             send_message(chat_id, "🤖 Bot 已上线，可以开始使用！")
         elif text == '/next':
-            send_message(chat_id, "📌 当前推荐接力项目：\n1. Cogni AI\n2. Lightchain AI\n3. Ozak AI\n(TGE预计7日内，可使用 /strategy 查看挂单建议)")
+            send_message(chat_id, "📌 当前推荐接力项目：\n1. Cogni AI\n2. Lightchain AI\n3. Ozak AI\n\n(TGE预计7日内，可使用 /strategy 查看挂单建议)")
         elif text == '/claim':
             send_message(chat_id, "📢 Solaxy 当前状态：\n- ✅ 预售进行中，预计 6月16日 21:30 Claim\n- 可关注价格提醒模块 /price")
         elif text == '/price':
