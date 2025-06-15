@@ -33,5 +33,3 @@ def webhook():
         message.reply_text("🤖 指令未识别。请发送 /start 查看欢迎信息")
 
     return "ok"
-
-# Railway 使用 gunicorn 启动，无需 app.run()
