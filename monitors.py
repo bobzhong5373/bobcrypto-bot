@@ -1,1 +1,0 @@
-# Whale monitoring logic
