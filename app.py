@@ -7,7 +7,6 @@ bot = telebot.TeleBot(API_TOKEN)
 
 app = FastAPI()
 
-# 指令响应
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     bot.reply_to(message, "👋 Welcome! Your bot is now online and working.")
@@ -28,7 +27,6 @@ def send_claim(message):
 def send_next(message):
     bot.reply_to(message, "🚀 Next: Cogni AI / Lightchain AI. Use /strategy for exit plan.")
 
-# FastAPI 用于接收 webhook
 @app.post("/webhook")
 async def process_webhook(request: Request):
     if request.headers.get('content-type') == 'application/json':
