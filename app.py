@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Request
 import telebot
 import os
+import threading
+import time
 
 API_TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(API_TOKEN)
@@ -40,3 +42,10 @@ async def webhook(request: Request):
     bot.process_new_updates([update])
     print("✅ Update processed")
     return "ok"
+
+# 保活线程，防止 Railway 自动停止服务
+def keep_alive():
+    while True:
+        time.sleep(30)
+
+threading.Thread(target=keep_alive).start()
