@@ -1,44 +1,38 @@
-
 from fastapi import FastAPI, Request
-import telegram
-from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters
+import telebot
 import os
 
-TOKEN = os.getenv("BOT_TOKEN")
-bot = telegram.Bot(token=TOKEN)
+API_TOKEN = os.getenv("BOT_TOKEN")
+bot = telebot.TeleBot(API_TOKEN)
 
 app = FastAPI()
 
-# 定义命令处理函数
-def start(update, context):
-    update.message.reply_text("👋 Welcome! Your bot is now online and working.")
+# 指令响应
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    bot.reply_to(message, "👋 Welcome! Your bot is now online and working.")
 
-def strategy(update, context):
-    update.message.reply_text("📊 Current strategy: Sell 600k @0.01, 600k @0.015, 400k @0.02, rest @0.03")
+@bot.message_handler(commands=['strategy'])
+def send_strategy(message):
+    bot.reply_to(message, "📊 Current strategy: Sell 600k @0.01, 600k @0.015, 400k @0.02, rest @0.03")
 
-def price(update, context):
-    update.message.reply_text("💰 Current price targets: 0.015 / 0.02 / 0.03 with dynamic adjustment based on Uniswap data.")
+@bot.message_handler(commands=['price'])
+def send_price(message):
+    bot.reply_to(message, "💰 Current price targets: 0.015 / 0.02 / 0.03 with dynamic adjustment.")
 
-def claim(update, context):
-    update.message.reply_text("📦 Claim not open yet. Estimated time: Tonight around 21:30 (UTC+8). Stay tuned!")
+@bot.message_handler(commands=['claim'])
+def send_claim(message):
+    bot.reply_to(message, "📦 Claim not open yet. Estimated: Tonight ~21:30 (UTC+8)")
 
-def next(update, context):
-    update.message.reply_text("🚀 Next project recommendation: Cogni AI or Lightchain AI. Use /strategy for exit plan.")
+@bot.message_handler(commands=['next'])
+def send_next(message):
+    bot.reply_to(message, "🚀 Next: Cogni AI / Lightchain AI. Use /strategy for exit plan.")
 
-dispatcher = Dispatcher(bot, None, workers=0)
-dispatcher.add_handler(CommandHandler("start", start))
-dispatcher.add_handler(CommandHandler("strategy", strategy))
-dispatcher.add_handler(CommandHandler("price", price))
-dispatcher.add_handler(CommandHandler("claim", claim))
-dispatcher.add_handler(CommandHandler("next", next))
-
+# FastAPI 用于接收 webhook
 @app.post("/webhook")
-async def webhook(request: Request):
-    json_data = await request.json()
-    update = telegram.Update.de_json(json_data, bot)
-    dispatcher.process_update(update)
+async def process_webhook(request: Request):
+    if request.headers.get('content-type') == 'application/json':
+        json_str = await request.body()
+        update = telebot.types.Update.de_json(json_str.decode("utf-8"))
+        bot.process_new_updates([update])
     return "ok"
-
-@app.get("/")
-def root():
-    return {"status": "Bot is live."}
