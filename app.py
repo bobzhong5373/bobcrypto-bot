@@ -1,30 +1,28 @@
+from fastapi import FastAPI, Request
 import os
-from telegram.ext import Updater, CommandHandler
-from flask import Flask, request
+import telebot
 
-TOKEN = os.getenv("BOT_TOKEN")
-updater = Updater(token=TOKEN, use_context=True)
-dispatcher = updater.dispatcher
+# 从环境变量获取 Telegram Bot Token
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+bot = telebot.TeleBot(BOT_TOKEN)
 
-# /start 命令处理函数
-def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id,
-        text="✅ 欢迎使用 BOBcryptoNotifier_bot\n\n你可以输入 /status 查看监听状态，或 /next 获取最新推荐项目。")
+# 创建 FastAPI 实例
+app = FastAPI()
 
-# 注册处理器
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
+# 设置 Webhook 接收路径
+@app.post("/")
+async def telegram_webhook(request: Request):
+    json_data = await request.body()
+    update = telebot.types.Update.de_json(json_data.decode("utf-8"))
+    bot.process_new_updates([update])
+    return {"status": "ok"}
 
-# Flask 应用用于接收 Telegram Webhook
-app = Flask(__name__)
+# 定义 /start 指令
+@bot.message_handler(commands=['start'])
+def handle_start(message):
+    bot.reply_to(message, "🤖 你好，我是你的 Web3 投资助手 BOBcryptoNotifier_bot！\n\n你可以发送 /status 查看监听状态，或 /next 获取今日推荐项目。")
 
-@app.route('/', methods=['POST'])
-def webhook():
-    update = request.get_json(force=True)
-    if update:
-        updater.bot.process_new_updates([updater.bot.de_json(update, updater.bot)])
-    return 'ok'
-
-# 启动本地监听（仅供调试，不影响 Railway 部署）
-if __name__ == '__main__':
-    app.run(port=8080)
+# 可在本地测试运行时添加：
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run("app:app", host="0.0.0.0", port=8080)
