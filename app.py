@@ -33,4 +33,4 @@ def run_telegram_bot():
     updater.idle()
 
 if __name__ == '__main__':
-    run_telegram_bot()
+    run_telegram_bot() 
