@@ -1,37 +1,38 @@
-import telebot
-import requests
 import os
+import logging
+import requests
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, CallbackContext
 
-# 从环境变量中读取配置
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK")
+# 环境变量读取
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
+DISCORD_WEBHOOK = os.environ.get("DISCORD_WEBHOOK")
 
-bot = telebot.TeleBot(TELEGRAM_TOKEN)
+# 设置日志
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# ✅ Telegram Bot 启动测试指令
-@bot.message_handler(commands=['start', 'help'])
-def send_welcome(message):
-    welcome_text = "🤖 你好，我是你的 Web3 投资提醒机器人！\n\n📌 支持以下功能：\n- Solaxy 挂单提醒\n- Claim 启动监控\n- Discord 联动推送\n\n请输入 /next 获取今日推荐项目。"
-    bot.reply_to(message, welcome_text)
-    # 同步推送至 Discord
-    send_to_discord(f"🟢 Telegram 用户启动了 Bot：{message.chat.id} 已发送 /start")
-
-# ✅ 示例命令 /next：推荐今日项目
-@bot.message_handler(commands=['next'])
-def send_next(message):
-    text = "📌 今日推荐项目：\n1. Cogni AI（TGE 待定）\n2. Lightchain AI（关注 ZK 落地）\n3. Ozak AI（具备题材叙事）"
-    bot.reply_to(message, text)
-    send_to_discord("📢 /next 命令触发：已返回今日项目推荐")
-
-# ✅ 推送内容到 Discord Webhook
-def send_to_discord(content):
+# /start 指令响应函数
+def start(update: Update, context: CallbackContext) -> None:
+    welcome_message = "🤖 欢迎使用 Web3 投资提醒 Bot！\n\n指令示例：\n/start - 查看欢迎信息\n/next - 获取最新接力项目\n/strategy - 当前挂单策略\n\n📡 系统已接入 Telegram + Discord 联动提醒。"
+    update.message.reply_text(welcome_message)
+    
+    # 同步推送到 Discord
     if DISCORD_WEBHOOK:
         try:
-            requests.post(DISCORD_WEBHOOK, json={"content": content})
+            requests.post(DISCORD_WEBHOOK, json={"content": f"📬 用户触发 /start：@{update.effective_user.username or '未知用户'}"})
         except Exception as e:
-            print(f"[❌ Discord 推送失败] {e}")
+            logging.error(f"Discord 推送失败：{e}")
 
-# ✅ 启动 Bot 轮询模式（适用于 Render）
-if __name__ == "__main__":
-    print("🤖 Bot 正在启动中…")
-    bot.polling(non_stop=True)
+def main():
+    updater = Updater(token=TELEGRAM_TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
+
+    # 注册指令
+    dispatcher.add_handler(CommandHandler("start", start))
+
+    # 启动 polling
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
